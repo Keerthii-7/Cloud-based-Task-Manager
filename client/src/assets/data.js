@@ -1118,7 +1118,7 @@ export const user = {
   name: "Keerthi Sankara",
   title: "Administrator",
   role: "Admin",
-  email: "keerthisankara8@gmai.com",
+  email: "admin@gmail.com",
   isAdmin: true,
   tasks: [],
   createdAt: "2024-02-06T09:58:44.794Z",

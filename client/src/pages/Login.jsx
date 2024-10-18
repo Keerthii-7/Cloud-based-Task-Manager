@@ -3,8 +3,11 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import Textbox from "../components/Textbox";
 import Button from "../components/Button";
-import { useSelector } from "react-redux";
-
+import { useSelector, useDispatch } from "react-redux";
+import { useLoginMutation } from "../redux/slices/api/authApiSlice";
+import Loading from "../components/Loader";
+import { setCredentials } from "../redux/slices/authSlice";
+import { toast } from "sonner";
 const Login = () => {
   const { user } = useSelector((state) => state.auth);
   const {
@@ -14,9 +17,19 @@ const Login = () => {
   } = useForm();
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
+  const [login, { isLoading }] = useLoginMutation();
   const submitHandler = async (data) => {
-    console.log("submit");
+    try {
+      const result = await login(data).unwrap();
+      console.log("Dispatching setCredentials with:", result);
+      dispatch(setCredentials(result));
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.data?.message || error.message);
+    }
   };
 
   useEffect(() => {
@@ -54,7 +67,7 @@ const Login = () => {
                 Welcome back!
               </p>
               <p className="text-center text-base text-gray-700 ">
-                Keep all your credential safge.
+                Keep all your credential safe.
               </p>
             </div>
 
@@ -86,11 +99,15 @@ const Login = () => {
                 Forget Password?
               </span>
 
-              <Button
-                type="submit"
-                label="Submit"
-                className="w-full h-10 bg-blue-700 text-white rounded-full"
-              />
+              {isLoading ? (
+                <Loading />
+              ) : (
+                <Button
+                  type="submit"
+                  label="Submit"
+                  className="w-full h-10 bg-blue-700 text-white rounded-full"
+                />
+              )}
             </div>
           </form>
         </div>
